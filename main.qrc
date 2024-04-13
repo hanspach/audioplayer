@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/audio.png</file>
+        <file>icons/default.png</file>
+        <file>icons/online.png</file>
+        <file>icons/musicfolder.png</file>
+        <file>icons/play.png</file>
+        <file>icons/pause.png</file>
+        <file>icons/settings.png</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>scripts/tagrequest.mjs</file>
+        <file>scripts/countryrequest.mjs</file>
+        <file>scripts/addFavorite.mjs</file>
+        <file>icons/trash.png</file>
+        <file>icons/change.png</file>
+        <file>translations/i18n_de.ts</file>
+        <file>translations/i18n_en.ts</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,166 @@
+import QtQuick
+import QtQuick.Controls
+import QtMultimedia
+import QtQuick.Layouts
+import QtQuick.Dialogs
+
+ApplicationWindow {
+    id: window
+    width: 480
+    height: 500
+    visible: true
+    title: qsTr("SAP - Simple Audio Player")
+    onClosing: { initValuesModel.writeJsonFile() }
+
+    header: Rectangle {
+        id: headerbar
+        color: "lightgrey"
+        height: 50
+        width: window.width
+
+        Row {
+            id: buttonsrow
+            spacing: 10
+
+            MsgToolButton {
+                icon.source: "qrc:/icons/online"
+                msg: qsTr("online radio")
+                onClicked: swipeview.currentIndex = 0
+            }
+            MsgToolButton {
+                icon.source: "qrc:/icons/musicfolder"
+                msg: qsTr("audio files")
+                onClicked: swipeview.currentIndex = 1
+            }
+            MsgToolButton {
+                icon.source: "qrc:/icons/settings"
+                msg: qsTr("settings")
+                onClicked: swipeview.currentIndex = 2
+            }
+            MsgToolButton {
+                id: playbtn
+                icon.source: initValuesModel.playbtnIconsrc
+                msg: "play | pause"
+                onClicked: {
+                    if(player.playbackState === MediaPlayer.PlayingState) {
+                        player.pause()
+                        initValuesModel.changePlayIcon("qrc:/icons/play")
+                        initValuesModel.controlDuration(true)
+                    }
+                    else if(player.playbackState === MediaPlayer.PausedState) {
+                        player.play()
+                        initValuesModel.changePlayIcon("qrc:/icons/pause")
+                        initValuesModel.controlDuration(false)
+                    }
+                }
+            }
+            MsgToolButton {
+                allowspin: true
+                id: addbtn
+                icon.source: "qrc:/icons/change"
+                msg: qsTr("add to favorites")
+                enabled: false
+                onClicked: {
+                    if(radiopage.addFavItem()) {
+                        addbtn.spin = true
+                    } else {
+                        initValuesModel.changeMessage(qsTr("entry exists already"), 2500)
+                    }
+                }
+            }
+        }
+
+        BigKnobSlider {
+            id: volumeSlider
+            value: initValuesModel.vlm
+            anchors.left: buttonsrow.right
+            anchors.right: headerbar.right
+            anchors.leftMargin: 5
+            anchors.rightMargin: 5
+        }
+
+    }
+
+    footer: Rectangle {
+        id: toolbar
+        color: "lightgrey"
+        height: 35
+        width: window.width
+
+        Label {
+            id: statuslbl
+            anchors.right: toolbar.right
+            anchors.rightMargin: 5
+            anchors.verticalCenter: parent.verticalCenter
+            width: 24; height: 24
+            background: Rectangle {
+                id: statusrect
+                width: 24; height: 24
+                color: initValuesModel.statusrectcolor
+                radius: 4
+            }
+        }
+
+        Control {
+            id: durationlbl
+            anchors.right: statuslbl.left
+            rightPadding: 5
+            topPadding: 8
+            contentItem: Text {
+                verticalAlignment: Text.AlignVCenter
+                text: initValuesModel.durationtext
+            }
+        }
+
+        Control {
+            id: msglbl
+            anchors.left: toolbar.left
+            leftPadding: 5
+            topPadding: 8
+            contentItem: Text {
+                id: msgtxt
+                verticalAlignment: Text.AlignVCenter
+                text: initValuesModel.msg
+            }
+        }
+    }
+
+    SwipeView {
+        id: swipeview
+        anchors.fill: parent
+        currentIndex: 0
+
+        RadioView {id: radiopage}
+        FileView {id: filepage }
+        SettingsView {}
+
+    }
+
+    MediaPlayer {
+        id: player
+        audioOutput: AudioOutput {
+            id: audio
+            volume: volumeSlider.value/100.0
+        }
+
+        onMetaDataChanged: {
+            if(player.error === MediaPlayer.NoError) {
+                initValuesModel.changeStatusRectColor('green')
+                initValuesModel.resetDuration()
+            }
+        }
+
+        onErrorOccurred: {
+            initValuesModel.changeMessage(player.errorString, 5000,"red");
+            initValuesModel.controlDuration(true,true)
+        }
+    }
+
+    Component.onCompleted: radiopage.player = player
+
+    function enableAddButton() {
+        addbtn.enabled = true
+    }
+}
+
+
