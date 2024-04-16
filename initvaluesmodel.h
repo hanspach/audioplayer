@@ -54,7 +54,6 @@ public:
     QString playbtnIconSrc();
     void setPlaybtnIconSrc(QString src);
     QString durationText();
-    void setDurationText(QString duration);
     QString message();
     QString poolUrlString();
     void icyMetaIntRequest(const QUrl);
@@ -68,11 +67,13 @@ public:
     Q_INVOKABLE void removeFavorite(QVariantMap);
 
     Q_INVOKABLE void changeMessage(QString lblmsg, int delay=0, QString color=QString());
+    Q_INVOKABLE void setDurationText(QString duration);
     Q_INVOKABLE void changeStatusRectColor(QString color);
     Q_INVOKABLE void changePlayIcon(QString src);
     Q_INVOKABLE void controlDuration(bool stop, bool clear=false);
     Q_INVOKABLE void resetDuration();
     Q_INVOKABLE void locationRequest(QString url);
+    Q_INVOKABLE void nextEntry();
 
 
 private slots:
@@ -94,6 +95,7 @@ signals:
     void durationChanged();
     void msgChanged();
     void urlChanged();
+    void entryChanged();
     void operate(const QString&);
 
 private:

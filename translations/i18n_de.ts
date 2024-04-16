@@ -54,4 +54,11 @@
         <translation>Alle Genres</translation>
     </message>
 </context>
+<context>
+    <name>FileView</name>
+    <message>
+        <source>open folder</source>
+        <translation>Verzeichnis öffnen</translation>
+    </message>
+</context>
 </TS>

@@ -5,6 +5,8 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 
 ApplicationWindow {
+    property bool toolbarvisible: true
+
     id: window
     width: 480
     height: 500
@@ -86,6 +88,7 @@ ApplicationWindow {
         color: "lightgrey"
         height: 35
         width: window.width
+        visible: toolbarvisible
 
         Label {
             id: statuslbl
@@ -130,8 +133,8 @@ ApplicationWindow {
         anchors.fill: parent
         currentIndex: 0
 
-        RadioView {id: radiopage}
-        FileView {id: filepage }
+        RadioView {id: radiopage; player: player}
+        FileView  {id: filepage;  player: player}
         SettingsView {}
 
     }
@@ -154,9 +157,13 @@ ApplicationWindow {
             initValuesModel.changeMessage(player.errorString, 5000,"red");
             initValuesModel.controlDuration(true,true)
         }
-    }
 
-    Component.onCompleted: radiopage.player = player
+        onMediaStatusChanged: {
+            if(mediaStatus === MediaPlayer.EndOfMedia) {
+               initValuesModel.nextEntry()
+            }
+        }
+    }
 
     function enableAddButton() {
         addbtn.enabled = true

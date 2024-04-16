@@ -1,73 +1,139 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtMultimedia
+import org.hsoft 1.0
+
 
 Page {
-    ColumnLayout {
+    required property MediaPlayer player
+    property int index: filelistmodel.idx
+
+    ListView {
+        id: filelistview
         anchors.fill: parent
-        anchors.margins: 1
+        model: filelistmodel
+        currentIndex: -1
 
-        ListView {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            clip: true
-            id: listview
-            currentIndex: -1
-            model: fruitModel
+        delegate: Item {
+            width: ListView.view.width - 20
+            height: 36
 
-            delegate:  Item  {
-               id: delegate
-                width: ListView.view.width
-                height: 20
-
+            Row {
                 Image {
-                    id: imgid
+                    height: 32; width: 32
                     source: img
-                    height: 20; width: 20
-                    anchors.left: parent.left
-                    anchors.leftMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
                 }
 
-                Text {
-                    anchors.left: imgid.right
-                    anchors.leftMargin: 5
-                    height: parent.height
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: name
+                Control {
+                    topPadding: 8
+                    contentItem: Text {
+                        Layout.topMargin: 5
+                        color: "white"
+                        text: name
+                    }
                 }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: { listview.currentIndex = index}
-                }
-
             }
-            highlight: Rectangle { width: 500; height:20; color: "lightblue"; radius: 5 }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    filelistmodel.setIndex(index)
+                    filelistview.currentIndex = index
 
+                    var item = filelistmodel.item(index)
+                    changeFile(item)
+               }
+           }
         }
 
+        section.property: "folder"
+        section.delegate: Rectangle {
+            width: ListView.view.width - 20
+            height: 20
+            color: "lightsteelblue"
+            RowLayout {
+                anchors.fill: parent
+                Layout.margins: 5
+                Text {
+                    text: section
+                    font.bold: true
+                }
+            }
+        }
+
+        ScrollBar.vertical: ScrollBar {
+            width: 20
+            policy: ScrollBar.AlwaysOn
+        }
+        highlight: Rectangle { width: ListView.view.width - 20; height:20; color: "lightgrey"; radius: 5 }
+
+        Component.onCompleted: {filelistmodel.findFiles()}
     }
 
-    ListModel {
-        id: fruitModel
-        property string language: "en"
-        ListElement {
-            img: "qrc:/icons/audio"
-            name: "Apple"
+    footer: Rectangle {
+        width: 500
+        height: 50
+        color: "lightgrey"
+        RowLayout {
+           anchors.fill: parent
 
-        }
-        ListElement {
-            img: "qrc:/icons/audio"
-            name: "Orange"
+           Text {
+               Layout.minimumWidth: 50
+               Layout.minimumHeight: 18
+               horizontalAlignment: Text.AlignRight
+               text: {
+                   var m = Math.floor(player.position / 60000)
+                   var s = '' + Math.floor(player.position / 1000) % 60
+                   return `${m}:${s.padStart(2, 0)}`
+               }
+           }
 
-        }
-        ListElement {
-            img: "qrc:/icons/audio"
-            name: "Banana"
+           Slider {
+               Layout.fillWidth: true
+               enabled: player.seekable
+               to: 1.0
+               value: player.position / player.duration
 
+               onMoved: player.setPosition(value * player.duration)
+            }
+
+            Text {
+                Layout.minimumWidth: 50
+                Layout.minimumHeight: 18
+                Layout.rightMargin: 5
+                text: {
+                    var m = Math.floor(player.duration / 60000)
+                    var s = '' + Math.floor(player.duration / 1000) % 60
+                    return `${m}:${s.padStart(2, 0)}`
+                }
+            }
+
+            MsgToolButton {
+                icon.source: "qrc:/icons/musicfolder"
+                msg: qsTr("open folder")
+                onClicked: {}
+            }
+       }
+    }
+
+    Component.onCompleted: {window.toolbarvisible = false }
+
+    FileListModel {
+       id: filelistmodel
+    }
+
+    onIndexChanged: {
+        if(filepage.index !== -1) {
+            filelistview.currentIndex = filepage.index
+            var item = filelistmodel.item(index)
+            changeFile(item)
         }
     }
 
+    function changeFile(item) {
+        player.stop()
+        player.source = item.url
+        player.play()
+    }
 }
 

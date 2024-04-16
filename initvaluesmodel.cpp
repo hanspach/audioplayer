@@ -284,6 +284,10 @@ void InitvaluesModel::setFavoriteString(QString favorite) {
     emit favoritestringChanged();
 }
 
+void InitvaluesModel::nextEntry() {
+    emit entryChanged();
+}
+
 void InitvaluesModel::handleResults(const struct data& result) {
     setDefaultCountry(result.defaultcountry);
     setVolume(result.volume);

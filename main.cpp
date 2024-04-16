@@ -4,6 +4,7 @@
 #include <QtCore>
 #include "initvaluesmodel.h"
 #include "stationlistmodel.h"
+#include "filelistmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -24,6 +25,7 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("initValuesModel", ivm);
     qmlRegisterType<StationListModel>("org.example", 1, 0, "StationListModel");
+    qmlRegisterType<FileListModel>("org.hsoft", 1, 0, "FileListModel");
     const QUrl url(u"qrc:/audioplayer/Main.qml"_qs);
 
     QObject::connect(

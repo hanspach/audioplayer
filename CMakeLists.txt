@@ -31,6 +31,7 @@ qt_add_qml_module(appaudioplayer
     QML_FILES Main.qml
     SOURCES initvaluesmodel.h initvaluesmodel.cpp
     SOURCES stationlistmodel.h stationlistmodel.cpp
+    SOURCES filelistmodel.h filelistmodel.cpp
     QML_FILES RadioView.qml
     QML_FILES FileView.qml
     QML_FILES SettingsView.qml
@@ -39,7 +40,6 @@ qt_add_qml_module(appaudioplayer
     SOURCES
     SOURCES
     SOURCES
-
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

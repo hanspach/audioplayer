@@ -5,7 +5,7 @@ import QtMultimedia
 import org.example 1.0
 
 Page {
-    property MediaPlayer player
+    required property MediaPlayer player
     property string country:        initValuesModel.defaultcountry
     property string favoritestring: initValuesModel.favoritestring
     property string url: initValuesModel.poolurlstring
@@ -148,6 +148,8 @@ Page {
             }
         }
     }
+
+    Component.onCompleted: {window.toolbarvisible = true }
 
     StationListModel {
         id: stationlistModel
