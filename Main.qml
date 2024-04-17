@@ -68,6 +68,7 @@ ApplicationWindow {
                     } else {
                         initValuesModel.changeMessage(qsTr("entry exists already"), 2500)
                     }
+                    addbtn.enabled = false
                 }
             }
         }
@@ -139,6 +140,12 @@ ApplicationWindow {
 
     }
 
+    PageIndicator {
+        visible: false
+        count: swipeview.count
+        currentIndex: indexQuery()
+    }
+
     MediaPlayer {
         id: player
         audioOutput: AudioOutput {
@@ -167,6 +174,14 @@ ApplicationWindow {
 
     function enableAddButton() {
         addbtn.enabled = true
+    }
+
+    function indexQuery() {
+        if(swipeview.currentIndex === 1)
+            window.toolbarvisible = false
+        else
+            window.toolbarvisible = true
+        return swipeview.currentIndex
     }
 }
 

@@ -46,8 +46,7 @@ Page {
         anchors.fill: parent
         ListView {
             property var curritem
-            flickableDirection: Flickable.VerticalFlick
-            boundsBehavior: Flickable.StopAtBounds
+
             SplitView.fillWidth: true
             SplitView.fillHeight: true
             clip: true
@@ -93,7 +92,12 @@ Page {
                     }
                 }
             }
-            ScrollBar.vertical: ScrollBar {}
+
+            ScrollBar.vertical: ScrollBar {
+                width: 20
+                policy: ScrollBar.AlwaysOn
+            }
+
             highlight: Rectangle { width: 500; height:20; color: "lightblue"; radius: 5 }
         }
 
@@ -148,8 +152,6 @@ Page {
             }
         }
     }
-
-    Component.onCompleted: {window.toolbarvisible = true }
 
     StationListModel {
         id: stationlistModel
@@ -229,6 +231,7 @@ Page {
         if(toadd) {
             initValuesModel.addFavorite(listview.curritem)
             favoriteworker.sendMessage({model: favoritelistModel, item: listview.curritem});
+            initValuesModel.setFavoriteString()
         }
         return toadd;
     }

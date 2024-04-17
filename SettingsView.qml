@@ -5,7 +5,7 @@ import QtQuick.Layouts
 Page {
     property string favoritestring: initValuesModel.favoritestring
     property var deletedFavorites: []
-    property bool activbtn: false
+    property bool again: false
     id: setpage
 
     ColumnLayout {
@@ -27,8 +27,9 @@ Page {
                 Layout.fillWidth: true
 
                 onActivated: {
-                    if(choosecb.currentText !== initValuesModel.defaultcountry)
-                        setpage.activbtn = true
+                    if(setpage.again && choosecb.currentText !== initValuesModel.defaultcountry)
+                        changebtn.enabled = true
+                    setpage.again = true
                 }
                 Component.onCompleted: {
                     chooseworker.sendMessage({'countries': choosecb.countries,'text': "", 'ok': false, 'minItems': 100})
@@ -50,8 +51,9 @@ Page {
                 id: setslider
                 value: initValuesModel.vlm
                 onValueChanged: {
-                    if(initValuesModel.vlm !== value)
-                        setpage.activbtn = true
+                    if(setpage.again && initValuesModel.vlm !== value)
+                        changebtn.enabled = true
+                    setpage.again = true
                 }
             }
 
@@ -139,7 +141,9 @@ Page {
                             setpage.deletedFavorites.push({'favicon': item.favicon,'name': item.name, 'url': item.url})
                             setfavmodel.remove(index,1)
                             trashmodel.remove(index,1)
-                            setpage.activbtn = true
+                            if(setpage.again)
+                                changebtn.enabled = true
+                            setpage.again = true
                         }
                     }
                 }
@@ -163,7 +167,7 @@ Page {
                 height: 32; width: 32
                 Layout.alignment: Qt.AlignRight
                 icon.source: "qrc:/icons/change"
-                enabled: setpage.activbtn
+                enabled: false
                 onClicked: {
                     doChanges()
                 }
@@ -228,7 +232,7 @@ Page {
         setpage.deletedFavorites.forEach((item) => initValuesModel.removeFavorite(item))
         initValuesModel.setFavoriteString()
         setpage.deletedFavorites.splice(0, setpage.deletedFavorites.length)
-        setpage.activbtn = false
+        changebtn.enabled = false
     }
 }
 

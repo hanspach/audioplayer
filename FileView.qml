@@ -4,7 +4,6 @@ import QtQuick.Layouts
 import QtMultimedia
 import org.hsoft 1.0
 
-
 Page {
     required property MediaPlayer player
     property int index: filelistmodel.idx
@@ -115,8 +114,6 @@ Page {
             }
        }
     }
-
-    Component.onCompleted: {window.toolbarvisible = false }
 
     FileListModel {
        id: filelistmodel
