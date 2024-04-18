@@ -65,17 +65,16 @@ Page {
                     id: imgid
                     source: img
                     height: 32; width: 32
-                    anchors.left: parent.left
                     anchors.leftMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
                 }
 
-                Text {
-                    anchors.left: imgid.right
-                    anchors.leftMargin: 5
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: "white"
-                    text: name
+                Control {
+                    topPadding: 6
+                    leftPadding: 37
+                    contentItem: Text {
+                        color: "white"
+                        text: name
+                    }
                 }
 
                 MouseArea {
@@ -119,7 +118,7 @@ Page {
                     id: favimg
                     source: favicon
                     height: 44; width: 44
-                    anchors.verticalCenter: parent.verticalCenter
+                    //anchors.verticalCenter: parent.verticalCenter
                 }
 
                 MouseArea {

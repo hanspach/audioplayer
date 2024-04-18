@@ -5,7 +5,6 @@ import QtQuick.Layouts
 Page {
     property string favoritestring: initValuesModel.favoritestring
     property var deletedFavorites: []
-    property bool again: false
     id: setpage
 
     ColumnLayout {
@@ -27,9 +26,10 @@ Page {
                 Layout.fillWidth: true
 
                 onActivated: {
-                    if(setpage.again && choosecb.currentText !== initValuesModel.defaultcountry)
+                    if(choosecb.currentIndex !== -1 && choosecb.currentText !== initValuesModel.defaultcountry)
                         changebtn.enabled = true
-                    setpage.again = true
+                    else
+                        changebtn.enabled = false
                 }
                 Component.onCompleted: {
                     chooseworker.sendMessage({'countries': choosecb.countries,'text': "", 'ok': false, 'minItems': 100})
@@ -51,9 +51,10 @@ Page {
                 id: setslider
                 value: initValuesModel.vlm
                 onValueChanged: {
-                    if(setpage.again && initValuesModel.vlm !== value)
+                    if(initValuesModel.vlm !== Math.round(setslider.value))
                         changebtn.enabled = true
-                    setpage.again = true
+                    else
+                        changebtn.enabled = false
                 }
             }
 
@@ -68,8 +69,6 @@ Page {
             spacing: 5
 
             ListView {
-                flickableDirection: Flickable.VerticalFlick
-                boundsBehavior: Flickable.StopAtBounds
                 Layout.fillHeight: true
                 clip: true
                 id: setfavlistview
@@ -86,17 +85,16 @@ Page {
                         id: setfavimg
                         source: favicon
                         height: 32; width: 32
-                        anchors.left: parent.left
                         anchors.leftMargin: 5
-                        anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    Text {
-                        anchors.left: setfavimg.right
-                        anchors.leftMargin: 5
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "white"
-                        text: name
+                    Control {
+                        topPadding: 6
+                        leftPadding: 37
+                        contentItem: Text {
+                            color: "white"
+                            text: name
+                        }
                     }
 
                     MouseArea {
@@ -115,8 +113,6 @@ Page {
 
             ListView {
                 id: trashlv
-                flickableDirection: Flickable.VerticalFlick
-                boundsBehavior: Flickable.StopAtBounds
                 clip: true
                 width: 50
                 Layout.fillHeight: true
@@ -141,9 +137,7 @@ Page {
                             setpage.deletedFavorites.push({'favicon': item.favicon,'name': item.name, 'url': item.url})
                             setfavmodel.remove(index,1)
                             trashmodel.remove(index,1)
-                            if(setpage.again)
-                                changebtn.enabled = true
-                            setpage.again = true
+                            changebtn.enabled = true
                         }
                     }
                 }
@@ -185,6 +179,7 @@ Page {
 
     ScrollBar {
         id: setsb
+        width: 5
     }
 
     onFavoritestringChanged: {

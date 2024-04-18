@@ -137,7 +137,6 @@ ApplicationWindow {
         RadioView {id: radiopage; player: player}
         FileView  {id: filepage;  player: player}
         SettingsView {}
-
     }
 
     PageIndicator {

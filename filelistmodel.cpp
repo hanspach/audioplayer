@@ -13,8 +13,14 @@ FileListModel::FileListModel(QObject *parent)
 
 #ifdef Q_OS_LINUX
     startFolder = "/home";
-#elif Q_OS_WIN
-    startFolder = "C:\\Users";
+#endif
+#ifdef Q_OS_WIN
+    QSettings m("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders",QSettings::NativeFormat);
+    QString s = m.value("My Music").toString();
+    if(!s.isEmpty())
+        startFolder = s;
+    else
+        startFolder = "C:\\Users";
 #endif
 
     connect(InitvaluesModel::instance(),&InitvaluesModel::entryChanged,this,&FileListModel::changeEntry);
@@ -137,7 +143,11 @@ QFileInfoList* FileListModel::search(QFileInfoList* files) {
     QStringList filters = QStringList() << "mp3";
     QDir d(startFolder);
     QFileInfoList list;
-    FileListModel::searchMusicFolder(d, list);
+    if(!startFolder.endsWith("Music")) {
+        FileListModel::searchMusicFolder(d, list);
+    } else {
+        list = d.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot| QDir::Files);
+    }
     return FileListModel::searching(list,files,filters);
 }
 
