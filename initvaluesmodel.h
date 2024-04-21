@@ -38,7 +38,6 @@ class InitvaluesModel : public QObject
     Q_PROPERTY(QString poolurlstring READ poolUrlString NOTIFY urlChanged FINAL)
     Q_PROPERTY(QString statusrectcolor READ statusRectColor NOTIFY colorChanged FINAL)
     Q_PROPERTY(QString playbtnIconsrc READ playbtnIconSrc  NOTIFY iconsrcChanged FINAL)
-    Q_PROPERTY(QString durationtext READ durationText WRITE setDurationText NOTIFY durationChanged FINAL)
     Q_PROPERTY(QString msg READ message NOTIFY msgChanged FINAL)
 public:
     static InitvaluesModel* instance();
@@ -53,7 +52,6 @@ public:
     void setStatusRectColor(QString color);
     QString playbtnIconSrc();
     void setPlaybtnIconSrc(QString src);
-    QString durationText();
     QString message();
     QString poolUrlString();
     void icyMetaIntRequest(const QUrl);
@@ -67,11 +65,8 @@ public:
     Q_INVOKABLE void removeFavorite(QVariantMap);
 
     Q_INVOKABLE void changeMessage(QString lblmsg, int delay=0, QString color=QString());
-    Q_INVOKABLE void setDurationText(QString duration);
     Q_INVOKABLE void changeStatusRectColor(QString color);
     Q_INVOKABLE void changePlayIcon(QString src);
-    Q_INVOKABLE void controlDuration(bool stop, bool clear=false);
-    Q_INVOKABLE void resetDuration();
     Q_INVOKABLE void locationRequest(QString url);
     Q_INVOKABLE void nextEntry();
 
@@ -79,12 +74,12 @@ public:
 private slots:
     void handleResults(const struct data& result);
     void deleteMsgText();
-    void updateDuration();
     void locationFinished();
     void icyMetaIntRead();
     void icyMetaDataRead();
 
 signals:
+    void operate(const QString&);
     void tagListChanged();
     void defaultCountryChanged();
     void volumeChanged();
@@ -92,11 +87,9 @@ signals:
     void favoritestringChanged();
     void colorChanged();
     void iconsrcChanged();
-    void durationChanged();
     void msgChanged();
     void urlChanged();
     void entryChanged();
-    void operate(const QString&);
 
 private:
     InitvaluesModel(QObject *parent = nullptr);
@@ -107,9 +100,6 @@ private:
     QString defaultcountry;
     QString statusrectcolor;
     QString playbtnIconsrc;
-    QString durationtext;
-    QTimer* secTimer;
-    QTime durationTime;
     QJsonArray favorites;
 
     QThread workerThread;

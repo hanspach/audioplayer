@@ -55,13 +55,8 @@ InitvaluesModel::InitvaluesModel(QObject *parent)
     favoritestring = QString();
     poolurlstring =  QString();
     statusrectcolor = "lightgrey";
-    durationtext = QString();
     playbtnIconsrc = "qrc:/icons/pause";
     favorites  = QJsonArray();
-
-    secTimer = new QTimer(this);
-    secTimer->setInterval(1000);
-    connect(secTimer, &QTimer::timeout, this, &InitvaluesModel::updateDuration);
 }
 
 InitvaluesModel::~InitvaluesModel() {
@@ -114,57 +109,10 @@ void InitvaluesModel::changePlayIcon(QString src) {
     emit iconsrcChanged();
 }
 
-QString InitvaluesModel::durationText() {
-    return durationtext;
-}
 
-void InitvaluesModel::setDurationText(QString duration) {
-    durationtext = duration;
-    emit durationChanged();
-}
 
 QString InitvaluesModel::poolUrlString() {
     return poolurlstring;
-}
-
-void InitvaluesModel::updateDuration() {
-    static bool firstTime = true;
-
-    if(!reply.isNull()) {
-        if(reply->isRunning()) {
-            durationTime = durationTime.addSecs(1);
-            durationtext = durationTime.toString("H:mm:ss");
-            setDurationText(durationtext);
-            if(statusrectcolor.compare("green") != 0) {
-                changeStatusRectColor("green");
-            }
-            emit durationChanged();
-            firstTime = true;
-        }
-        else {
-            if(firstTime) {
-                changeMessage("no connection",25+00,"red");
-                setDurationText(QString());
-                firstTime = false;
-            }
-        }
-    }
-}
-
-void InitvaluesModel::resetDuration() {
-    durationTime.setHMS(0,0,0);
-    setDurationText(durationTime.toString("H:mm:ss"));
-    secTimer->start();
-}
-
-void InitvaluesModel::controlDuration(bool stop, bool clear) {
-    if(stop)
-        secTimer->stop();
-    else
-        secTimer->start();
-    if(clear) {
-        setDurationText(QString());
-    }
 }
 
 QString InitvaluesModel::message() {

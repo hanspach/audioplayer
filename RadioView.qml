@@ -85,7 +85,7 @@ Page {
 
                         listview.curritem = {name: item.name, url: item.url, favicon: item.favicon}
                         window.enableAddButton()
-                        initValuesModel.changeStatusRectColor("yellow")
+                        initValuesModel.changeMessage("",0,"yellow")
                         initValuesModel.locationRequest(item.url)
                         changeStation(item.url)
                     }

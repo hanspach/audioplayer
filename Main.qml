@@ -112,7 +112,15 @@ ApplicationWindow {
             topPadding: 8
             contentItem: Text {
                 verticalAlignment: Text.AlignVCenter
-                text: initValuesModel.durationtext
+                text: {
+                    var h = Math.floor(player.position / 3600000)
+                    var m = Math.floor(player.position / 60000)
+                    var s = '' + Math.floor(player.position / 1000) % 60
+                    if(h > 0)
+                        return `${h}:${m.padStart(2,0)}:${s.padStart(2, 0)}`
+                    else
+                        return `${m}:${s.padStart(2, 0)}`
+                }
             }
         }
 
@@ -134,9 +142,9 @@ ApplicationWindow {
         anchors.fill: parent
         currentIndex: 0
 
-      //  RadioView {id: radiopage; player: player}
+        RadioView {id: radiopage; player: player}
         FileView  {id: filepage;  player: player}
-      //  SettingsView {}
+        SettingsView {}
     }
 
     PageIndicator {
@@ -155,7 +163,6 @@ ApplicationWindow {
         onMetaDataChanged: {
             if(player.error === MediaPlayer.NoError) {
                 initValuesModel.changeStatusRectColor('green')
-                initValuesModel.resetDuration()
             }
         }
 
