@@ -1,8 +1,34 @@
 #include "filelistmodel.h"
 #include "initvaluesmodel.h"
-#include <QtConcurrent/QtConcurrent>
 
-QString FileListModel::startFolder = QString();
+Worker::Worker(const QString& path, const QStringList& list) {
+    startPath = path;
+    filters = list;
+    files = new QFileInfoList();
+}
+
+void Worker::prepareSearching() {
+    QDir dir(startPath);
+    QFileInfoList infos = dir.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot| QDir::Files);
+    searching(infos);
+    emit searchFinished(files);
+    emit finished();
+}
+
+void Worker::searching(QFileInfoList& infos) {
+    foreach(const QFileInfo& fi, infos) {
+        if(fi.isDir()) {
+            QDir dir(fi.absoluteFilePath());
+            QFileInfoList il(dir.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot| QDir::Files));
+            searching(il);
+        }
+        else {
+            if(filters.contains(fi.suffix())) {
+                files->append(fi);
+            }
+        }
+    }
+}
 
 FileListModel::FileListModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -10,18 +36,6 @@ FileListModel::FileListModel(QObject *parent)
     rolenames[NameRole] = "name";
     rolenames[IconRole] = "img";
     rolenames[FolderRole] = "folder";
-
-#ifdef Q_OS_LINUX
-    startFolder = "/home";
-#endif
-#ifdef Q_OS_WIN
-    QSettings m("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders",QSettings::NativeFormat);
-    QString s = m.value("My Music").toString();
-    if(!s.isEmpty())
-        startFolder = s;
-    else
-        startFolder = "C:\\Users";
-#endif
 
     connect(InitvaluesModel::instance(),&InitvaluesModel::entryChanged,this,&FileListModel::changeEntry);
     idx = -1;
@@ -88,25 +102,48 @@ void FileListModel::setIndex(int index) {
     idx = index;
 }
 
-void FileListModel::findFiles(const QString& folderName) {
-    if(!folderName.isEmpty()) {
-        startFolder = folderName;
+QString FileListModel::standardPath(int location) {
+    QStandardPaths::StandardLocation loc = static_cast<QStandardPaths::StandardLocation>(location);
+    QStringList list = QStandardPaths::standardLocations(loc);
+    QString res = QString();
+    QString limiter = "/";
+
+#ifdef Q_OS_WIN
+    limiter = "\\";
+#endif
+    if(!list.empty()) {
+        res = list[0];
+        if(!res.endsWith("Music")) {
+            res += limiter + "Music";
+        }
     }
-    connect(&watcher,&QFutureWatcher<QFileInfoList*>::finished,this,&FileListModel::searchFinished);
-    QFileInfoList* files = new QFileInfoList();
-    future = QtConcurrent::run(FileListModel::search, files);
-    watcher.setFuture(future);
+    return res;
 }
 
-void FileListModel::searchFinished() {
-    QFileInfoList* fl = future.result();
+void FileListModel::findFiles(QString path) {
+    path = path.remove("file://");  // unresolved for Win ?!!
+    QThread* thread = new QThread();
+    Worker*  worker = new Worker(path);
+    worker->moveToThread(thread);
 
-    if(fl && fl->size() > 0) {
+    connect(thread, &QThread::started, worker, &Worker::prepareSearching);
+    connect(worker, &Worker::finished, thread, &QThread::quit);
+    connect(worker, &Worker::searchFinished, this, &FileListModel::searchFinished);
+    connect(worker, &Worker::finished, worker, &Worker::deleteLater);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+
+    thread->start();
+}
+
+
+
+void FileListModel::searchFinished(QFileInfoList* files) {
+    if(files && files->size() > 0) {
         if(!list.empty()) {
             remove(0, list.size());
         }
-        for(int i=0; i < fl->size(); i++) {
-            const QFileInfo fi = fl->at(i);
+        for(int i=0; i < files->size(); i++) {
+            const QFileInfo fi = files->at(i);
             Info info;
             QString s = "file:/";
             QString path = fi.absoluteFilePath();
@@ -123,46 +160,6 @@ void FileListModel::searchFinished() {
     }
 }
 
-QFileInfoList* FileListModel::searching(QFileInfoList& infos, QFileInfoList* files, const QStringList& filters) {
-    foreach(const QFileInfo& fi, infos) {
-        if(fi.isDir()) {
-            QDir dir(fi.absoluteFilePath());
-            QFileInfoList iList(dir.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot| QDir::Files));
-            searching(iList,files,filters);
-        }
-        else {
-            if(filters.contains(fi.suffix())) {
-                files->append(fi);
-            }
-        }
-    }
-    return files;
-}
-
-QFileInfoList* FileListModel::search(QFileInfoList* files) {
-    QStringList filters = QStringList() << "mp3";
-    QDir d(startFolder);
-    QFileInfoList list;
-    if(!startFolder.endsWith("Music")) {
-        FileListModel::searchMusicFolder(d, list);
-    } else {
-        list = d.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot| QDir::Files);
-    }
-    return FileListModel::searching(list,files,filters);
-}
-
-void FileListModel::searchMusicFolder(const QDir& dir, QFileInfoList& list) {
-    foreach(const QFileInfo& fi, dir.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot)) {
-        if(fi.isDir()) {
-            QDir d(fi.absoluteFilePath());
-            foreach(const QFileInfo& fi, d.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot)) {
-                if(fi.absoluteFilePath().endsWith("Music")) {
-                    list.append(fi);
-                }
-            }
-        }
-    }
-}
 
 
 

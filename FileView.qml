@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import QtMultimedia
 import org.hsoft 1.0
 
@@ -66,7 +67,7 @@ Page {
         }
         highlight: Rectangle { width: ListView.view.width - 20; height:20; color: "lightgrey"; radius: 5 }
 
-        Component.onCompleted: {filelistmodel.findFiles()}
+        Component.onCompleted: {filelistmodel.findFiles(filelistmodel.standardPath())}
     }
 
     footer: Rectangle {
@@ -110,9 +111,20 @@ Page {
             MsgToolButton {
                 icon.source: "qrc:/icons/musicfolder"
                 msg: qsTr("open folder")
-                onClicked: {}
+                onClicked: {
+                    folderDialog.open()
+                }
             }
        }
+    }
+
+    FolderDialog {
+        id: folderDialog
+        currentFolder: filelistmodel.standardPath()
+        visible: false
+        onAccepted:  {
+            filelistmodel.findFiles(folderDialog.selectedFolder)
+        }
     }
 
     FileListModel {

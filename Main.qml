@@ -134,9 +134,9 @@ ApplicationWindow {
         anchors.fill: parent
         currentIndex: 0
 
-        RadioView {id: radiopage; player: player}
+      //  RadioView {id: radiopage; player: player}
         FileView  {id: filepage;  player: player}
-        SettingsView {}
+      //  SettingsView {}
     }
 
     PageIndicator {

@@ -10,6 +10,27 @@ struct Info
     QString url    = QString();
 };
 
+class Worker : public QObject {
+    Q_OBJECT
+
+public:
+    explicit Worker(const QString& path, const QStringList& list = QStringList() << "mp3");
+
+public slots:
+    void prepareSearching();
+
+signals:
+    void finished();
+    void searchFinished(QFileInfoList*);
+
+private:
+    void searching(QFileInfoList&);
+
+    QString startPath;
+    QStringList filters;
+    QFileInfoList* files;
+};
+
 class FileListModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -32,25 +53,20 @@ public:
     int index();
 
     Q_INVOKABLE QVariant item(int idx);
-    Q_INVOKABLE void findFiles(const QString& = QString());
+    Q_INVOKABLE QString standardPath(int location = 4); // QStandardPath::MusicLocation
+    Q_INVOKABLE void findFiles(QString = QString());
     Q_INVOKABLE void setIndex(int index);
 
 signals:
     void indexChanged();
 
 private slots:
-    void searchFinished();
+    void searchFinished(QFileInfoList*);
     void changeEntry();
 private:
-    static void searchMusicFolder(const QDir& dir, QFileInfoList& list);
-    static QFileInfoList* searching(QFileInfoList& info, QFileInfoList* files, const QStringList& filters);
-    static QFileInfoList* search(QFileInfoList* list);
-
-    QList<Info> list;
     QHash<int, QByteArray> rolenames;
-    QFuture<QFileInfoList*> future;
-    QFutureWatcher<QFileInfoList*> watcher;
-    static QString startFolder;
+    QList<Info> list;
     int idx;
 };
+
 #endif
