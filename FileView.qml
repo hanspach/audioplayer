@@ -13,7 +13,6 @@ Page {
         id: filelistview
         anchors.fill: parent
         model: filelistmodel
-        currentIndex: -1
 
         delegate: Item {
             width: ListView.view.width - 20
@@ -67,7 +66,10 @@ Page {
         }
         highlight: Rectangle { width: ListView.view.width - 20; height:20; color: "lightgrey"; radius: 5 }
 
-        Component.onCompleted: {filelistmodel.findFiles(filelistmodel.standardPath())}
+        Component.onCompleted: {
+            filelistmodel.findFiles(filelistmodel.standardPath())
+            filelistview.currentIndex = -1
+        }
     }
 
     footer: Rectangle {

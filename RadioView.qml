@@ -118,7 +118,6 @@ Page {
                     id: favimg
                     source: favicon
                     height: 44; width: 44
-                    //anchors.verticalCenter: parent.verticalCenter
                 }
 
                 MouseArea {
