@@ -122,7 +122,6 @@ Page {
 
     FolderDialog {
         id: folderDialog
-        currentFolder: filelistmodel.standardPath()
         visible: false
         onAccepted:  {
             filelistmodel.findFiles(folderDialog.selectedFolder)

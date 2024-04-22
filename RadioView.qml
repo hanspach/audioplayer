@@ -170,7 +170,8 @@ Page {
             favoritelistModel.clear()
             const ja = JSON.parse(radiopage.favoritestring)
             ja.forEach((obj) => {
-                if(obj.favicon === "")
+                console.log(obj.favicon) // !!!!!!!!!!!!!!!!!
+                if(typeof obj.favicon == 'undefined' || obj.favicon === "")
                     obj.favicon = "qrc:/icons/default"
                 favoritelistModel.append(obj)
             })

@@ -47,12 +47,10 @@ ApplicationWindow {
                     if(player.playbackState === MediaPlayer.PlayingState) {
                         player.pause()
                         initValuesModel.changePlayIcon("qrc:/icons/play")
-                        initValuesModel.controlDuration(true)
                     }
                     else if(player.playbackState === MediaPlayer.PausedState) {
                         player.play()
                         initValuesModel.changePlayIcon("qrc:/icons/pause")
-                        initValuesModel.controlDuration(false)
                     }
                 }
             }

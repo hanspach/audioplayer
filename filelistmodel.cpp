@@ -106,22 +106,24 @@ QString FileListModel::standardPath(int location) {
     QStandardPaths::StandardLocation loc = static_cast<QStandardPaths::StandardLocation>(location);
     QStringList list = QStandardPaths::standardLocations(loc);
     QString res = QString();
-    QString limiter = "/";
 
-#ifdef Q_OS_WIN
-    limiter = "\\";
-#endif
     if(!list.empty()) {
         res = list[0];
         if(!res.endsWith("Music")) {
-            res += limiter + "Music";
+            res += "/Music";
         }
     }
     return res;
 }
 
 void FileListModel::findFiles(QString path) {
-    path = path.remove("file://");  // unresolved for Win ?!!
+    if(path.startsWith("file://")) {
+        if(path[9] == ':')
+            path = path.mid(8);
+         else
+            path = path.mid(7);
+    }
+
     QThread* thread = new QThread();
     Worker*  worker = new Worker(path);
     worker->moveToThread(thread);
