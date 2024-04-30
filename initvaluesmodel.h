@@ -38,6 +38,7 @@ class InitvaluesModel : public QObject
     Q_PROPERTY(QString poolurlstring READ poolUrlString NOTIFY urlChanged FINAL)
     Q_PROPERTY(QString statusrectcolor READ statusRectColor NOTIFY colorChanged FINAL)
     Q_PROPERTY(QString playbtnIconsrc READ playbtnIconSrc  NOTIFY iconsrcChanged FINAL)
+    Q_PROPERTY(QString durationtxt READ durationTxt NOTIFY durationChanged FINAL)
     Q_PROPERTY(QString msg READ message NOTIFY msgChanged FINAL)
 public:
     static InitvaluesModel* instance();
@@ -52,6 +53,7 @@ public:
     void setStatusRectColor(QString color);
     QString playbtnIconSrc();
     void setPlaybtnIconSrc(QString src);
+    QString durationTxt();
     QString message();
     QString poolUrlString();
     void icyMetaIntRequest(const QUrl);
@@ -65,6 +67,7 @@ public:
     Q_INVOKABLE void removeFavorite(QVariantMap);
 
     Q_INVOKABLE void changeMessage(QString lblmsg, int delay=0, QString color=QString());
+    Q_INVOKABLE void startStopTimer(int status);
     Q_INVOKABLE void changeStatusRectColor(QString color);
     Q_INVOKABLE void changePlayIcon(QString src);
     Q_INVOKABLE void locationRequest(QString url);
@@ -77,6 +80,7 @@ private slots:
     void locationFinished();
     void icyMetaIntRead();
     void icyMetaDataRead();
+    void secElapsed();
 
 signals:
     void operate(const QString&);
@@ -87,6 +91,7 @@ signals:
     void favoritestringChanged();
     void colorChanged();
     void iconsrcChanged();
+    void durationChanged();
     void msgChanged();
     void urlChanged();
     void entryChanged();
@@ -103,14 +108,18 @@ private:
     QJsonArray favorites;
 
     QThread workerThread;
+    QTimer* secTimer;
+    QTime  secTime;
+    int timeout;
     QString favoritestring;
+    QString durationtxt;
     QString msg;
     QNetworkAccessManager qnam;
     QScopedPointer<QNetworkReply, QScopedPointerDeleteLater> reply;
+    QString uri;
     QString poolurlstring;
     int bufferSize;
     QString title;
-    int timeout;
 };
 
 #endif // INITVALUESMODEL_H

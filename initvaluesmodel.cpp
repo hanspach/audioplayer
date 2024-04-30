@@ -45,17 +45,22 @@ InitvaluesModel* InitvaluesModel::instance() {
 InitvaluesModel::InitvaluesModel(QObject *parent)
     : QObject(parent)  {
 
+    secTimer = new QTimer(parent);
+    secTimer->setInterval(1000);
     AsyncFileReader *worker = new AsyncFileReader;
     worker->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
     connect(this, &InitvaluesModel::operate, worker, &AsyncFileReader::doWork);
     connect(worker, &AsyncFileReader::resultReady, this, &InitvaluesModel::handleResults);
+    connect(secTimer, &QTimer::timeout, this, &InitvaluesModel::secElapsed);
     workerThread.start();
 
-    favoritestring = QString();
-    poolurlstring =  QString();
+
+    favoritestring  = QString();
+    poolurlstring   =  QString();
     statusrectcolor = "lightgrey";
-    playbtnIconsrc = "qrc:/icons/pause";
+    durationtxt     = QString();
+    playbtnIconsrc  = "qrc:/icons/pause";
     favorites  = QJsonArray();
 }
 
@@ -115,6 +120,10 @@ QString InitvaluesModel::poolUrlString() {
     return poolurlstring;
 }
 
+QString InitvaluesModel::durationTxt() {
+    return durationtxt;
+}
+
 QString InitvaluesModel::message() {
     return msg;
 }
@@ -135,10 +144,34 @@ void InitvaluesModel::deleteMsgText() {
     emit msgChanged();
 }
 
+void InitvaluesModel::startStopTimer(int status) {
+    if(status)
+        secTimer->start();
+    else
+        secTimer->stop();
+}
+
+void InitvaluesModel::secElapsed() {
+    if(timeout < 5) {
+        secTime = secTime.addSecs(1);
+        durationtxt = secTime.toString("h:mm:ss");
+        emit durationChanged();
+    }
+    else {
+        secTimer->stop();
+        changeMessage(tr("connection lost"),2000,"red");
+        locationFinished(); // ?????????????
+    }
+    ++timeout;
+}
+
 void InitvaluesModel::locationRequest(QString url) {
+    uri = url;
+    timeout= 0;
     QNetworkRequest req(url);
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
     req.setMaximumRedirectsAllowed(3);
+    req.setTransferTimeout(50);
     reply.reset(qnam.get(req));
     connect(reply.get(), &QNetworkReply::finished, this, &InitvaluesModel::locationFinished);
 }
@@ -146,9 +179,16 @@ void InitvaluesModel::locationRequest(QString url) {
 void InitvaluesModel::locationFinished() {
     if(reply->hasRawHeader("Location")) {
         poolurlstring = QString::fromUtf8(reply->rawHeader("Location"));
-        emit urlChanged();
-        icyMetaIntRequest(QUrl(poolurlstring));
     }
+    else {
+        poolurlstring = uri;
+    }
+    emit urlChanged();
+    icyMetaIntRequest(QUrl(poolurlstring));
+    secTime.setHMS(0,0,0);
+    durationtxt = secTime.toString("h:mm:ss");
+    emit durationChanged();
+    secTimer->start();
 }
 
 void InitvaluesModel::icyMetaIntRequest(QUrl url) {
@@ -166,9 +206,9 @@ void InitvaluesModel::icyMetaIntRead() {
         int num = sint.toInt(&ok);
         if(ok) {
             bufferSize = num;
-            icyMetaDataRequest();
         }
     }
+    icyMetaDataRequest();
 }
 
 void InitvaluesModel::icyMetaDataRequest() {
@@ -203,6 +243,7 @@ void InitvaluesModel::icyMetaDataRead() {
             }
         }
     }
+    timeout = 0;
 }
 
 void InitvaluesModel::addFavorite(QJsonObject obj) {

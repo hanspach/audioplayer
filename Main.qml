@@ -47,10 +47,12 @@ ApplicationWindow {
                     if(player.playbackState === MediaPlayer.PlayingState) {
                         player.pause()
                         initValuesModel.changePlayIcon("qrc:/icons/play")
+                        initValuesModel.startStopTimer(0)
                     }
                     else if(player.playbackState === MediaPlayer.PausedState) {
                         player.play()
                         initValuesModel.changePlayIcon("qrc:/icons/pause")
+                        initValuesModel.startStopTimer(1);
                     }
                 }
             }
@@ -110,15 +112,7 @@ ApplicationWindow {
             topPadding: 8
             contentItem: Text {
                 verticalAlignment: Text.AlignVCenter
-                text: {
-                    var h = Math.floor(player.position / 3600000)
-                    var m = Math.floor(player.position / 60000)
-                    var s = '' + Math.floor(player.position / 1000) % 60
-                    if(h > 0)
-                        return `${h}:${m.padStart(2,0)}:${s.padStart(2, 0)}`
-                    else
-                        return `${m}:${s.padStart(2, 0)}`
-                }
+                text: initValuesModel.durationtxt
             }
         }
 
@@ -143,12 +137,13 @@ ApplicationWindow {
         RadioView {id: radiopage; player: player}
         FileView  {id: filepage;  player: player}
         SettingsView {}
-    }
 
-    PageIndicator {
-        visible: false
-        count: swipeview.count
-        currentIndex: indexQuery()
+        onCurrentIndexChanged: {
+            if(swipeview.currentIndex === 1)
+                window.toolbarvisible = false
+            else
+                window.toolbarvisible = true
+        }
     }
 
     MediaPlayer {
@@ -166,11 +161,10 @@ ApplicationWindow {
 
         onErrorOccurred: {
             initValuesModel.changeMessage(player.errorString, 5000,"red");
-            initValuesModel.controlDuration(true,true)
         }
 
         onMediaStatusChanged: {
-            if(mediaStatus === MediaPlayer.EndOfMedia) {
+            if(swipeview.currentIndex === 1 && mediaStatus === MediaPlayer.EndOfMedia) {
                initValuesModel.nextEntry()
             }
         }
@@ -178,14 +172,6 @@ ApplicationWindow {
 
     function enableAddButton() {
         addbtn.enabled = true
-    }
-
-    function indexQuery() {
-        if(swipeview.currentIndex === 1)
-            window.toolbarvisible = false
-        else
-            window.toolbarvisible = true
-        return swipeview.currentIndex
     }
 }
 

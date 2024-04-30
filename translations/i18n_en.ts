@@ -61,4 +61,15 @@
         <translation>open folder</translation>
     </message>
 </context>
+<context>
+    <name>InitvaluesModel</name>
+    <message>
+        <source>connection lost</source>
+        <translation>connection lost</translation>
+    </message>
+    <message>
+        <source>network error</source>
+        <translation>network error</translation>
+    </message>
+</context>
 </TS>

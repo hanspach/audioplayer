@@ -61,4 +61,15 @@
         <translation>Verzeichnis öffnen</translation>
     </message>
 </context>
+<context>
+    <name>InitvaluesModel</name>
+    <message>
+        <source>connection lost</source>
+        <translation>Verbindung verloren</translation>
+    </message>
+    <message>
+        <source>network error</source>
+        <translation>Netzwerkfehler</translation>
+    </message>
+</context>
 </TS>

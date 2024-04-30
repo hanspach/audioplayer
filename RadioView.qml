@@ -87,7 +87,6 @@ Page {
                         window.enableAddButton()
                         initValuesModel.changeMessage("",0,"yellow")
                         initValuesModel.locationRequest(item.url)
-                        changeStation(item.url)
                     }
                 }
             }
@@ -140,7 +139,6 @@ Page {
                         listview.currentIndex = -1
                         initValuesModel.changeMessage(item.name,5000,"yellow")
                         initValuesModel.locationRequest(item.url)
-                        changeStation(item.url)
                     }
 
                     ToolTip {
@@ -170,10 +168,7 @@ Page {
             favoritelistModel.clear()
             const ja = JSON.parse(radiopage.favoritestring)
             ja.forEach((obj) => {
-                console.log(obj.favicon) // !!!!!!!!!!!!!!!!!
-                if(typeof obj.favicon == 'undefined' || obj.favicon === "")
-                    obj.favicon = "qrc:/icons/default"
-                favoritelistModel.append(obj)
+               favoritelistModel.append(obj)
             })
         }
     }
@@ -210,6 +205,10 @@ Page {
     WorkerScript {
         id: favoriteworker
         source: "qrc:/scripts/addFavorite.mjs"
+        onMessage: (msg) => {
+            initValuesModel.addFavorite(msg.item)
+            initValuesModel.setFavoriteString()
+        }
     }
 
     function changeStation(url) {
@@ -228,9 +227,7 @@ Page {
             }
         }
         if(toadd) {
-            initValuesModel.addFavorite(listview.curritem)
             favoriteworker.sendMessage({model: favoritelistModel, item: listview.curritem});
-            initValuesModel.setFavoriteString()
         }
         return toadd;
     }

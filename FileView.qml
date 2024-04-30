@@ -84,8 +84,13 @@ Page {
                Layout.minimumHeight: 18
                horizontalAlignment: Text.AlignRight
                text: {
-                   var m = Math.floor(player.position / 60000)
-                   var s = '' + Math.floor(player.position / 1000) % 60
+                   var m = 0
+                   var s = "" + 0
+
+                   if(filelistview.currentIndex >= 0) {
+                      m = Math.floor(player.position / 60000)
+                      s = '' + Math.floor(player.position / 1000) % 60
+                   }
                    return `${m}:${s.padStart(2, 0)}`
                }
            }
