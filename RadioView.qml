@@ -53,6 +53,7 @@ Page {
             id: listview
             currentIndex: -1
             model: stationlistModel
+            highlightFollowsCurrentItem: false
 
             delegate: Item  {
                id: delegate
@@ -96,7 +97,17 @@ Page {
                 policy: ScrollBar.AlwaysOn
             }
 
-            highlight: Rectangle { width: 500; height:20; color: "lightblue"; radius: 5 }
+            highlight: Rectangle {
+                width: listview.width-25; height:20;
+                color: "lightblue"; radius: 5
+                y: listview.currentItem.y+5
+                Behavior on y {
+                    SpringAnimation {
+                       spring: 3
+                       damping: 0.2
+                    }
+                }
+            }
         }
 
         ListView {

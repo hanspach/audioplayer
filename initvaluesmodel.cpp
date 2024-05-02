@@ -160,7 +160,7 @@ void InitvaluesModel::secElapsed() {
     else {
         secTimer->stop();
         changeMessage(tr("connection lost"),2000,"red");
-        locationFinished(); // ?????????????
+       //locationFinished(); // ?????????????
     }
     ++timeout;
 }
