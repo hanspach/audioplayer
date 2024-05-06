@@ -72,4 +72,11 @@
         <translation>network error</translation>
     </message>
 </context>
+<context>
+    <name>StationListModel</name>
+    <message>
+        <source>radio programs</source>
+        <translation>radio programs</translation>
+    </message>
+</context>
 </TS>

@@ -129,13 +129,15 @@ QString InitvaluesModel::message() {
 }
 
 void InitvaluesModel::changeMessage(QString lblmsg, int delay, QString color) {
-    msg = lblmsg;
-    emit msgChanged();
-    if(!color.isEmpty()) {
-        changeStatusRectColor(color);
-    }
-    if(delay > 0) {
-        QTimer::singleShot(delay, this, &InitvaluesModel::deleteMsgText);
+    if(!lblmsg.isEmpty()) {
+        msg = lblmsg;
+        emit msgChanged();
+        if(!color.isEmpty()) {
+            changeStatusRectColor(color);
+        }
+        if(delay > 0) {
+            QTimer::singleShot(delay, this, &InitvaluesModel::deleteMsgText);
+        }
     }
 }
 

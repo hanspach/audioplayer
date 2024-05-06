@@ -11,7 +11,7 @@ bool ProgramProps::read(const QJsonObject& json) {
     codec   = QString();
 
     if(json.contains("name"))
-        name = json["name"].toString();
+        name = json["name"].toString().trimmed().mid(0,40);
     if(json.contains("url"))
         url = json["url"].toString();
     if(json.contains("favicon"))
@@ -124,7 +124,7 @@ void StationListModel::stationsFinished(QNetworkReply* reply) {
             }
             const int size = list.size();
             if(size > 9) {
-                InitvaluesModel::instance()->changeMessage(QString::number(size) + "Radioprogramme",2500);
+                InitvaluesModel::instance()->changeMessage(QString::number(size) + " " + tr("radio programs"),2500);
             }
         }
     }

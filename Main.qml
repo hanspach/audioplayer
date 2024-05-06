@@ -119,7 +119,9 @@ ApplicationWindow {
         Control {
             id: msglbl
             anchors.left: toolbar.left
+            anchors.right: durationlbl.left
             leftPadding: 5
+            rightPadding: 5
             topPadding: 8
             contentItem: Text {
                 id: msgtxt
@@ -161,6 +163,7 @@ ApplicationWindow {
 
         onErrorOccurred: {
             initValuesModel.changeMessage(player.errorString, 5000,"red");
+            initValuesModel.startStopTimer(0)
         }
 
         onMediaStatusChanged: {

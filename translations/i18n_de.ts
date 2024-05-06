@@ -72,4 +72,11 @@
         <translation>Netzwerkfehler</translation>
     </message>
 </context>
+<context>
+    <name>StationListModel</name>
+    <message>
+        <source>radio programs</source>
+        <translation>Radioprogramme</translation>
+    </message>
+</context>
 </TS>
