@@ -68,6 +68,7 @@ public:
 
     Q_INVOKABLE void changeMessage(QString lblmsg, int delay=0, QString color=QString());
     Q_INVOKABLE void startStopTimer(int status);
+    Q_INVOKABLE void setMsgBarWidth(int width);
     Q_INVOKABLE void changeStatusRectColor(QString color);
     Q_INVOKABLE void changePlayIcon(QString src);
     Q_INVOKABLE void locationRequest(QString url);
@@ -76,11 +77,11 @@ public:
 
 private slots:
     void handleResults(const struct data& result);
-    void deleteMsgText();
     void locationFinished();
     void icyMetaIntRead();
     void icyMetaDataRead();
     void secElapsed();
+    void handleMessage();
 
 signals:
     void operate(const QString&);
@@ -109,6 +110,16 @@ private:
 
     QThread workerThread;
     QTimer* secTimer;
+
+    QTimer* msgTimer;
+    int delay;
+    int pos;
+    int cnt;
+    QString orgmsg;
+    int msgbarwidth;
+
+
+
     QTime  secTime;
     int timeout;
     QString favoritestring;

@@ -55,8 +55,11 @@ InitvaluesModel::InitvaluesModel(QObject *parent)
     connect(secTimer, &QTimer::timeout, this, &InitvaluesModel::secElapsed);
     workerThread.start();
 
+    msgTimer = new QTimer(parent);
+    connect(msgTimer, &QTimer::timeout, this, &InitvaluesModel::handleMessage);
 
     favoritestring  = QString();
+    msg             = QString();
     poolurlstring   =  QString();
     statusrectcolor = "lightgrey";
     durationtxt     = QString();
@@ -130,20 +133,71 @@ QString InitvaluesModel::message() {
 
 void InitvaluesModel::changeMessage(QString lblmsg, int delay, QString color) {
     if(!lblmsg.isEmpty()) {
+        msgTimer->stop();
         msg = lblmsg;
-        emit msgChanged();
+        int charwidth= 8;
+        int txtwidth = lblmsg.length() * charwidth;
+        cnt = msgbarwidth / charwidth;
+        pos = 1;
+        this->delay = delay;
+
+        if(delay > 0) {
+            msg = msg.mid(0, cnt);
+            emit msgChanged();
+            msgTimer->start(delay);
+        }
+        else {
+            if(txtwidth > msgbarwidth) {
+                for(int i=0; i < cnt; i++) {
+                    msg = " " + msg;
+                }
+                orgmsg = msg;
+                msgTimer->start(100);
+             }
+             else {
+                 emit msgChanged();
+             }
+        }
+
         if(!color.isEmpty()) {
             changeStatusRectColor(color);
-        }
-        if(delay > 0) {
-            QTimer::singleShot(delay, this, &InitvaluesModel::deleteMsgText);
         }
     }
 }
 
-void InitvaluesModel::deleteMsgText() {
-    msg = "";
-    emit msgChanged();
+void InitvaluesModel::handleMessage() {
+    static int times = 0;
+    static int ds = 600;
+
+    if(delay > 100) {
+        msg = "";
+        emit msgChanged();
+        msgTimer->stop();
+    }
+    else {
+        ++ds;
+        if(pos  <= orgmsg.length()) {
+            msg = orgmsg.mid(pos, cnt);
+            emit msgChanged();
+            ++pos;
+        }
+        else {
+            if(times < 3) {
+                pos = 1;
+                ++times;
+            }
+            else {
+                if(ds > 600) {
+                    times = 0;
+                    ds   = 0;
+                }
+            }
+        }
+    }
+}
+
+void InitvaluesModel::setMsgBarWidth(int width) {
+    msgbarwidth = width;
 }
 
 void InitvaluesModel::startStopTimer(int status) {

@@ -128,6 +128,7 @@ ApplicationWindow {
                 verticalAlignment: Text.AlignVCenter
                 text: initValuesModel.msg
             }
+            onWidthChanged: {initValuesModel.setMsgBarWidth(width)}
         }
     }
 
