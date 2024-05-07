@@ -132,42 +132,41 @@ QString InitvaluesModel::message() {
 }
 
 void InitvaluesModel::changeMessage(QString lblmsg, int delay, QString color) {
-    if(!lblmsg.isEmpty()) {
-        msgTimer->stop();
-        msg = lblmsg;
-        int charwidth= 8;
-        int txtwidth = lblmsg.length() * charwidth;
-        cnt = msgbarwidth / charwidth;
-        pos = 1;
-        this->delay = delay;
+    msgTimer->stop();
+    msg = lblmsg;
 
-        if(delay > 0) {
-            msg = msg.mid(0, cnt);
-            emit msgChanged();
-            msgTimer->start(delay);
-        }
-        else {
-            if(txtwidth > msgbarwidth) {
-                for(int i=0; i < cnt; i++) {
-                    msg = " " + msg;
-                }
-                orgmsg = msg;
-                msgTimer->start(100);
-             }
-             else {
-                 emit msgChanged();
-             }
-        }
+    int charwidth= 8;
+    int txtwidth = lblmsg.length() * charwidth;
+    cnt = msgbarwidth / charwidth;
+    pos = 1;
+    this->delay = delay;
 
-        if(!color.isEmpty()) {
-            changeStatusRectColor(color);
-        }
+    if(delay > 0) {
+        msg = msg.mid(0, cnt);
+        emit msgChanged();
+        msgTimer->start(delay);
+    }
+    else {
+        if(txtwidth > msgbarwidth) {
+            for(int i=0; i < cnt; i++) {
+                msg = " " + msg;
+            }
+            orgmsg = msg;
+            msgTimer->start(100);
+         }
+         else {
+             emit msgChanged();
+         }
+    }
+
+    if(!color.isEmpty()) {
+        changeStatusRectColor(color);
     }
 }
 
 void InitvaluesModel::handleMessage() {
     static int times = 0;
-    static int ds = 600;
+    static int ds = 0;
 
     if(delay > 100) {
         msg = "";

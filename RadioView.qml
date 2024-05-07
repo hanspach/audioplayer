@@ -86,7 +86,7 @@ Page {
 
                         listview.curritem = {name: item.name, url: item.url, favicon: item.favicon}
                         window.enableAddButton()
-                        initValuesModel.changeMessage("",0,"yellow")
+                        initValuesModel.changeMessage("",2500,"yellow")
                         initValuesModel.locationRequest(item.url)
                     }
                 }
@@ -148,7 +148,7 @@ Page {
                     onClicked: {
                         const item = favoritelistModel.get(index)
                         listview.currentIndex = -1
-                        initValuesModel.changeMessage(item.name,5000,"yellow")
+                        initValuesModel.changeMessage(item.name,2500,"yellow")
                         initValuesModel.locationRequest(item.url)
                     }
 
