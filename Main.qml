@@ -150,6 +150,7 @@ ApplicationWindow {
     }
 
     MediaPlayer {
+        objectName: "mediaplayer"
         id: player
         audioOutput: AudioOutput {
             id: audio
@@ -168,8 +169,11 @@ ApplicationWindow {
         }
 
         onMediaStatusChanged: {
-            if(swipeview.currentIndex === 1 && mediaStatus === MediaPlayer.EndOfMedia) {
-               initValuesModel.nextEntry()
+            if(mediaStatus === MediaPlayer.EndOfMedia) {
+                if(swipeview.currentIndex === 1)
+                    initValuesModel.nextEntry()
+                else if(swipeview.currentIndex === 0)
+                    initValuesModel.locationRequest(initValuesModel.uri);
             }
         }
     }

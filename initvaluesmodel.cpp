@@ -215,7 +215,17 @@ void InitvaluesModel::secElapsed() {
     else {
         secTimer->stop();
         changeMessage(tr("connection lost"),2000,"red");
-       //locationFinished(); // ?????????????
+        unsigned int dur = secTime.second() + secTime.minute()*60 + secTime.hour() * 3600;
+        if(dur > 10) {          // net connection broken -> try reconnection
+            QString path = "file:/" + QCoreApplication::applicationDirPath();
+            path += "/short.mp3";
+#ifdef Q_OS_WIN
+            static QRegularExpression regex("\\[m]");
+            path = path.replace(regex, "/");
+#endif
+            poolurlstring = path;
+            emit urlChanged();
+        }
     }
     ++timeout;
 }

@@ -6,6 +6,8 @@
 #include "stationlistmodel.h"
 #include "filelistmodel.h"
 
+QMediaPlayer* player = nullptr;
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);

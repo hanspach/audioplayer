@@ -5,6 +5,9 @@
 #include <QTimer>
 #include <QJsonObject>
 #include <QtNetwork>
+#include <QtMultimedia/QMediaPlayer>
+
+extern QMediaPlayer* player;
 
 struct data {
     int volume;
@@ -58,6 +61,7 @@ public:
     QString poolUrlString();
     void icyMetaIntRequest(const QUrl);
     void icyMetaDataRequest();
+    QString uri;
 
     Q_INVOKABLE void writeJsonFile(QString fileName = "init.json");
     Q_INVOKABLE void setDefaultCountry(QString country);
@@ -73,7 +77,6 @@ public:
     Q_INVOKABLE void changePlayIcon(QString src);
     Q_INVOKABLE void locationRequest(QString url);
     Q_INVOKABLE void nextEntry();
-
 
 private slots:
     void handleResults(const struct data& result);
@@ -115,11 +118,9 @@ private:
     int delay;
     int pos;
     int cnt;
+
     QString orgmsg;
     int msgbarwidth;
-
-
-
     QTime  secTime;
     int timeout;
     QString favoritestring;
@@ -127,7 +128,6 @@ private:
     QString msg;
     QNetworkAccessManager qnam;
     QScopedPointer<QNetworkReply, QScopedPointerDeleteLater> reply;
-    QString uri;
     QString poolurlstring;
     int bufferSize;
     QString title;
