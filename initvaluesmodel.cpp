@@ -215,6 +215,8 @@ void InitvaluesModel::secElapsed() {
     else {
         secTimer->stop();
         changeMessage(tr("connection lost"),2000,"red");
+
+        locationRequest(poolurlstring);
 /*
         unsigned int dur = secTime.second() + secTime.minute()*60 + secTime.hour() * 3600;
         if(dur > 10) {          // net connection broken -> try reconnection

@@ -86,8 +86,9 @@ QVariant StationListModel::item(int idx) {
     return QVariant();
 }
 
-void StationListModel::stationRequest(QString country, QString tag, QString url) {
+void StationListModel::stationRequest(QString country, QString tag, QString limit, QString url) {
     mCountry = country;
+    limitxt = limit;
     checkCountry = !country.isEmpty() && !tag.isEmpty();
     if(!country.isEmpty() && tag.isEmpty()) {
         url += "/bycountry/" + country;
@@ -118,14 +119,21 @@ void StationListModel::stationsFinished(QNetworkReply* reply) {
                 const QJsonObject& jo = val.toObject();
                 if(pp.read(jo)) {
                     if(!checkCountry || pp.country.compare(mCountry) == 0) {
-                        push(pp);
+                        if(limitxt.isEmpty() || pp.name.startsWith(limitxt, Qt::CaseInsensitive))
+                            push(pp);
                     }
                 }
             }
             const int size = list.size();
-            if(size > 9) {
-                InitvaluesModel::instance()->changeMessage(QString::number(size) + " " + tr("radio programs"),2500);
-            }
+            QString msg;
+            
+            if(size > 1)
+                msg = "radio programs";
+            else if(size == 1)
+                msg = "radio program";
+            else
+                msg = "no radio program";                
+            InitvaluesModel::instance()->changeMessage(QString::number(size) + " " + tr(msg.toUtf8()),2500);
         }
     }
     else {

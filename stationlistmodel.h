@@ -33,7 +33,7 @@ public:
     void remove(int index, int count = 1);
 
     Q_INVOKABLE QVariant item(int idx);
-    Q_INVOKABLE void stationRequest(QString country, QString tag, QString url="http://de1.api.radio-browser.info/json/stations");
+    Q_INVOKABLE void stationRequest(QString country, QString tag, QString limit=QString(), QString url="http://de1.api.radio-browser.info/json/stations");
 
 private slots:
     void stationsFinished(QNetworkReply*);
@@ -43,6 +43,7 @@ private:
     QHash<int, QByteArray> rolenames;
     bool checkCountry;
     QString mCountry;
+    QString limitxt;
     int listsize;
 };
 #endif

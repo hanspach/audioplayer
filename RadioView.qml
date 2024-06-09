@@ -14,7 +14,7 @@ Page {
         ComboBox {
             property var countries: []
             id: countrycb
-            width: parent.width / 2
+            width: parent.width / 2 - 50
             onActivated: {
                 var country = currentText !== qsTr("all countries") ? currentText : ""
                 var tag = tagcb.currentText !== qsTr("all genres") ? tagcb.currentText : ""
@@ -25,11 +25,30 @@ Page {
                 countryworker.sendMessage({'countries': countrycb.countries,'text': "", 'ok': false, 'minItems': 100})
             }
         }
+	
+	Column {
+            Rectangle {
+                width: 100
+                height: 6
+                color: "black"
+            }
+
+            TextField {
+               id: stationlimitxt
+               width: 100
+               placeholderText: "limit station"
+               onTextChanged: {
+                   var country = countrycb.currentText !== qsTr("all countries") ? countrycb.currentText : ""
+                   var tag = tagcb.currentText !== qsTr("all genres") ? tagcb.currentText : ""
+                   stationlistModel.stationRequest(country,tag,stationlimitxt.text)
+               }
+           }
+        }
 
         ComboBox {
            property var tags: []
            id: tagcb
-           width: parent.width / 2
+           width: parent.width / 2 - 50
            onActivated: {
                var country = countrycb.currentText !== qsTr("all countries") ? countrycb.currentText : ""
                var tag = currentText !== qsTr("all genres") ? currentText : ""

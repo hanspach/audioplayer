@@ -78,5 +78,13 @@
         <source>radio programs</source>
         <translation>Radioprogramme</translation>
     </message>
+    <message>
+        <source>radio program</source>
+        <translation>Radioprogramm</translation>
+    </message>
+    <message>
+        <source>no radio program</source>
+        <translation>Kein Radioprogramm</translation>
+    </message>
 </context>
 </TS>
