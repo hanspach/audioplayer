@@ -207,29 +207,26 @@ void InitvaluesModel::startStopTimer(int status) {
 }
 
 void InitvaluesModel::secElapsed() {
+    static QString previousUrl = QString();
+    static int previousVolume;
+
     if(timeout < 5) {
         secTime = secTime.addSecs(1);
         durationtxt = secTime.toString("h:mm:ss");
         emit durationChanged();
+        if(!previousUrl.isEmpty()) {
+            locationRequest(previousUrl);
+            setVolume(previousVolume);
+            previousUrl = QString();
+        }
     }
     else {
         secTimer->stop();
         changeMessage(tr("connection lost"),2000,"red");
-
-        locationRequest(poolurlstring);
-/*
-        unsigned int dur = secTime.second() + secTime.minute()*60 + secTime.hour() * 3600;
-        if(dur > 10) {          // net connection broken -> try reconnection
-            QString path = "file:/" + QCoreApplication::applicationDirPath();
-            path += "/short.mp3";
-#ifdef Q_OS_WIN
-            static QRegularExpression regex("\\[m]");
-            path = path.replace(regex, "/");
-#endif
-            poolurlstring = path;
-            emit urlChanged();
-        }
-    */
+        previousUrl = poolurlstring;
+        previousVolume = vlm;
+        setVolume(0);
+        locationRequest("https://wdr-wdr5-live.icecastssl.wdr.de/wdr/wdr5/live/mp3/128/stream.mp3"); // dummy-url after connection lost
     }
     ++timeout;
 }

@@ -18,6 +18,7 @@ Page {
             onActivated: {
                 var country = currentText !== qsTr("all countries") ? currentText : ""
                 var tag = tagcb.currentText !== qsTr("all genres") ? tagcb.currentText : ""
+                stationlimitxt.text = ""
                 stationlistModel.stationRequest(country,tag)
             }
 
@@ -52,6 +53,7 @@ Page {
            onActivated: {
                var country = countrycb.currentText !== qsTr("all countries") ? countrycb.currentText : ""
                var tag = currentText !== qsTr("all genres") ? currentText : ""
+               stationlimitxt.text = ""
                stationlistModel.stationRequest(country,tag)
             }
 

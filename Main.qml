@@ -172,8 +172,6 @@ ApplicationWindow {
             if(mediaStatus === MediaPlayer.EndOfMedia) {
                 if(swipeview.currentIndex === 1)
                     initValuesModel.nextEntry()
-                else if(swipeview.currentIndex === 0)
-                    initValuesModel.locationRequest(initValuesModel.uri);
             }
         }
     }
