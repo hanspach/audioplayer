@@ -14,9 +14,8 @@ ApplicationWindow {
     title: qsTr("SAP - Simple Audio Player")
     onClosing: { initValuesModel.writeJsonFile() }
 
-    header: Rectangle {
+    header: Control {
         id: headerbar
-        color: "lightgrey"
         height: 50
         width: window.width
 

@@ -6,7 +6,7 @@
 struct Info
 {
     QString name   = QString();
-    QString folder = QString();
+    bool isDirectory = false;
     QString url    = QString();
 };
 
@@ -24,7 +24,7 @@ signals:
     void searchFinished(QFileInfoList*);
 
 private:
-    void searching(QFileInfoList&);
+    void searching(QFileInfoList&, int cnt=0);
 
     QString startPath;
     QStringList filters;
@@ -39,10 +39,10 @@ public:
     enum PropRoles {
         IconRole = Qt::UserRole + 1,
         NameRole,
-        FolderRole
     };
 
     Q_PROPERTY(int idx  READ index  NOTIFY indexChanged FINAL)
+    Q_PROPERTY(bool enableBackBtn READ enableBackBtn NOTIFY enableChanged)
 
     explicit FileListModel(QObject *parent = nullptr);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -50,15 +50,18 @@ public:
     QHash<int, QByteArray> roleNames() const override { return rolenames; }
     void push(const Info& info);
     void remove(int index, int count);
+    bool enableBackBtn();
     int index();
 
     Q_INVOKABLE QVariant item(int idx);
     Q_INVOKABLE QString standardPath(int location = 4); // QStandardPath::MusicLocation
     Q_INVOKABLE void findFiles(QString = QString());
+    Q_INVOKABLE void addFiles(QString path);
     Q_INVOKABLE void setIndex(int index);
 
 signals:
     void indexChanged();
+    void enableChanged();
 
 private slots:
     void searchFinished(QFileInfoList*);
@@ -66,7 +69,11 @@ private slots:
 private:
     QHash<int, QByteArray> rolenames;
     QList<Info> list;
+
+    QStringList visitedPathes;
+    QString prevPath;
     int idx;
+    bool enablebackbtn;
 };
 
 #endif

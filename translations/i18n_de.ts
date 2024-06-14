@@ -60,6 +60,10 @@
         <source>open folder</source>
         <translation>Verzeichnis öffnen</translation>
     </message>
+    <message>
+        <source>back to folder</source>
+        <translation>Zum Verzeichnis</translation>
+    </message>
 </context>
 <context>
     <name>InitvaluesModel</name>

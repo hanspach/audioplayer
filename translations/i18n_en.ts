@@ -60,6 +60,17 @@
         <source>open folder</source>
         <translation>open folder</translation>
     </message>
+    <message>
+        <source>back to folder</source>
+        <translation>back to folder</translation>
+    </message>
+</context>
+<context>
+    <name>FileView</name>
+    <message>
+        <source>open folder</source>
+        <translation>open folder</translation>
+    </message>
 </context>
 <context>
     <name>InitvaluesModel</name>

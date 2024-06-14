@@ -38,24 +38,11 @@ Page {
                 onClicked: {
                     filelistmodel.setIndex(index)
                     filelistview.currentIndex = index
-
                     var item = filelistmodel.item(index)
-                    changeFile(item)
-               }
-           }
-        }
-
-        section.property: "folder"
-        section.delegate: Rectangle {
-            width: ListView.view.width - 20
-            height: 20
-            color: "lightsteelblue"
-            RowLayout {
-                anchors.fill: parent
-                Layout.margins: 5
-                Text {
-                    text: section
-                    font.bold: true
+                    if(item.isDirectory)
+                        filelistmodel.addFiles(item.url)
+                    else
+                        changeFile(item)
                 }
             }
         }
@@ -75,14 +62,24 @@ Page {
     footer: Rectangle {
         width: 500
         height: 50
-        color: "lightgrey"
+        color: "#2E1503"
         RowLayout {
            anchors.fill: parent
 
-           Text {
+            MsgToolButton {
+                icon.source: "qrc:/icons/back"
+                msg: qsTr("back to folder")
+                enabled: filelistmodel.enableBackBtn
+                onClicked: {
+                    filelistmodel.findFiles()
+                }
+            }
+
+            Text {
                Layout.minimumWidth: 50
                Layout.minimumHeight: 18
                horizontalAlignment: Text.AlignRight
+               color: "white"
                text: {
                    var m = 0
                    var s = "" + 0
@@ -95,7 +92,7 @@ Page {
                }
            }
 
-           Slider {
+            BigKnobSlider {
                Layout.fillWidth: true
                enabled: player.seekable
                to: 1.0
@@ -108,6 +105,7 @@ Page {
                 Layout.minimumWidth: 50
                 Layout.minimumHeight: 18
                 Layout.rightMargin: 5
+                color: "white"
                 text: {
                     var m = Math.floor(player.duration / 60000)
                     var s = '' + Math.floor(player.duration / 1000) % 60

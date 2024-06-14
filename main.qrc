@@ -15,5 +15,7 @@
         <file>icons/change.png</file>
         <file>translations/i18n_de.ts</file>
         <file>translations/i18n_en.ts</file>
+        <file>icons/back.png</file>
+        <file>icons/openfolder.png</file>
     </qresource>
 </RCC>

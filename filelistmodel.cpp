@@ -15,16 +15,23 @@ void Worker::prepareSearching() {
     emit finished();
 }
 
-void Worker::searching(QFileInfoList& infos) {
+void Worker::searching(QFileInfoList& infos, int cnt) {
     foreach(const QFileInfo& fi, infos) {
         if(fi.isDir()) {
             QDir dir(fi.absoluteFilePath());
             QFileInfoList il(dir.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot| QDir::Files));
-            searching(il);
+            ++cnt;
+            searching(il, cnt);
         }
         else {
             if(filters.contains(fi.suffix())) {
-                files->append(fi);
+                if(cnt == 0) {
+                    files->append(fi);
+                }
+                else {
+                    files->append(QFileInfo(fi.dir().filesystemAbsolutePath()));
+                    break;
+                }
             }
         }
     }
@@ -35,10 +42,9 @@ FileListModel::FileListModel(QObject *parent)
 {
     rolenames[NameRole] = "name";
     rolenames[IconRole] = "img";
-    rolenames[FolderRole] = "folder";
-
     connect(InitvaluesModel::instance(),&InitvaluesModel::entryChanged,this,&FileListModel::changeEntry);
     idx = -1;
+    enablebackbtn = false;
 }
 
 int FileListModel::rowCount(const QModelIndex &parent) const {
@@ -53,10 +59,17 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const {
         const Info &info = list.at(index.row());
         if(role == NameRole)
             res = info.name;
-        else if(role == IconRole)
-            res =  "qrc:/icons/audio";
-        else if(role == FolderRole)
-            res = info.folder;
+        else if(role == IconRole) {
+            if(info.isDirectory) {
+                if(visitedPathes.contains(info.url))
+                    res = "qrc:/icons/openfolder";
+                else
+                    res =  "qrc:/icons/musicfolder";
+            }
+            else {
+                res =  "qrc:/icons/audio";
+            }
+        }
     }
     return res;
 }
@@ -80,7 +93,7 @@ QVariant FileListModel::item(int idx) {
         const Info& info = list.at(idx);
         QVariantMap map;
         map.insert("name",  info.name);
-        map.insert("folder",info.folder);
+        map.insert("isDirectory",info.isDirectory);
         map.insert("url",  info.url);
         return QVariant(map);
     }
@@ -117,11 +130,17 @@ QString FileListModel::standardPath(int location) {
 }
 
 void FileListModel::findFiles(QString path) {
-    if(path.startsWith("file://")) {
-        if(path[9] == ':')
-            path = path.mid(8);
-         else
-            path = path.mid(7);
+    if(path.isEmpty()) {
+        path = prevPath;
+    }
+    else {
+        if(path.startsWith("file://")) {
+            if(path[9] == ':')
+                path = path.mid(8);
+             else
+                path = path.mid(7);
+        }
+        prevPath = path;
     }
 
     QThread* thread = new QThread();
@@ -133,7 +152,8 @@ void FileListModel::findFiles(QString path) {
     connect(worker, &Worker::searchFinished, this, &FileListModel::searchFinished);
     connect(worker, &Worker::finished, worker, &Worker::deleteLater);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-
+    enablebackbtn = false;
+    emit enableChanged();
     thread->start();
 }
 
@@ -149,17 +169,33 @@ void FileListModel::searchFinished(QFileInfoList* files) {
             Info info;
             QString s = "file:/";
             QString path = fi.absoluteFilePath();
+            path = QDir::toNativeSeparators(path);
 
-#ifdef Q_OS_WIN
-            static QRegularExpression regex("\\[m]");
-            path = path.replace(regex, "/");
-#endif
-            info.url  = s + path;
-            info.folder = fi.absoluteDir().dirName();
+            if(fi.isDir())
+                info.url = path;
+            else
+                info.url  = s + path;
+            info.isDirectory = fi.isDir();
             info.name   = fi.fileName().mid(0, fi.fileName().lastIndexOf('.'));
             push(info);
         }
     }
+}
+
+void FileListModel::addFiles(QString path) {
+    if(!visitedPathes.contains(path)) {
+        visitedPathes.append(path);
+    }
+    QDir dir(path);
+    QFileInfoList* il = new QFileInfoList(dir.entryInfoList(QDir::NoDotAndDotDot| QDir::Files));
+    searchFinished(il);
+    dir = QDir(prevPath);
+    enablebackbtn = dir.entryList(QDir::Dirs|QDir::NoDotAndDotDot).size() > 1;
+    emit enableChanged();
+}
+
+bool FileListModel::enableBackBtn() {
+    return enablebackbtn;
 }
 
 
