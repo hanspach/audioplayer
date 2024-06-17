@@ -9,6 +9,7 @@ ToolButton {
     id: control
     ToolTip.text: msg
     ToolTip.visible: msg ? ma.containsMouse : false
+    icon.color: "transparent"
     MouseArea {
         id: ma
         anchors.fill: parent

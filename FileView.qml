@@ -9,6 +9,11 @@ Page {
     required property MediaPlayer player
     property int index: filelistmodel.idx
 
+    header: Row {
+         height: 10
+         width: parent.width
+    }
+
     ListView {
         id: filelistview
         anchors.fill: parent
@@ -62,7 +67,7 @@ Page {
     footer: Rectangle {
         width: 500
         height: 50
-        color: "#2E1503"
+        color: "#222222"
         RowLayout {
            anchors.fill: parent
 
@@ -95,8 +100,9 @@ Page {
             BigKnobSlider {
                Layout.fillWidth: true
                enabled: player.seekable
+               from: 0
                to: 1.0
-               value: player.position / player.duration
+               value: enabled ? player.position / player.duration : 0
 
                onMoved: player.setPosition(value * player.duration)
             }
