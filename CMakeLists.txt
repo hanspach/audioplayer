@@ -46,7 +46,7 @@ set_target_properties(appaudioplayer PROPERTIES
 )
 
 if(ANDROID)
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
      if (ANDROID_ABI STREQUAL "armeabi-v7a")
         set(APPLICATION_LIBS_BIN
             ${CMAKE_CURRENT_SOURCE_DIR}/lib/android_armv7/libplugins_multimedia_androidmediaplugin_armeabi-v7a.so
