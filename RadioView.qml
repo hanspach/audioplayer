@@ -26,23 +26,15 @@ Page {
                 countryworker.sendMessage({'countries': countrycb.countries,'text': "", 'ok': false, 'minItems': 100})
             }
         }
-	
-	Column {
-            Rectangle {
-                width: 100
-                height: 6
-                color: "black"
-            }
 
-            TextField {
-               id: stationlimitxt
-               width: 100
-               placeholderText: "limit station"
-               onTextChanged: {
-                   var country = countrycb.currentText !== qsTr("all countries") ? countrycb.currentText : ""
-                   var tag = tagcb.currentText !== qsTr("all genres") ? tagcb.currentText : ""
-                   stationlistModel.stationRequest(country,tag,stationlimitxt.text)
-               }
+        TextField {
+           id: stationlimitxt
+           width: 100
+           placeholderText: "limit station"
+           onTextChanged: {
+               var country = countrycb.currentText !== qsTr("all countries") ? countrycb.currentText : ""
+               var tag = tagcb.currentText !== qsTr("all genres") ? tagcb.currentText : ""
+               stationlistModel.stationRequest(country,tag,stationlimitxt.text)
            }
         }
 
