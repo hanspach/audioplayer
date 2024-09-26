@@ -1,8 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtMultimedia
-import QtQuick.Layouts
-import QtQuick.Dialogs
 
 ApplicationWindow {
     property bool toolbarvisible: true
@@ -88,7 +86,7 @@ ApplicationWindow {
         color: "lightgrey"
         height: 35
         width: window.width
-        visible: toolbarvisible
+        visible: initValuesModel.toolbarvisible
 
         Label {
             id: statuslbl

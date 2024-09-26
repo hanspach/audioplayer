@@ -125,9 +125,9 @@ Page {
 
         ListView {
             id: favoritelist
-            implicitWidth: 60
-            SplitView.preferredWidth: 60
-            SplitView.maximumWidth: 60
+            implicitWidth: 50
+            SplitView.preferredWidth: 50
+            SplitView.maximumWidth: 50
             SplitView.fillHeight: true
             model: favoritelistModel
 

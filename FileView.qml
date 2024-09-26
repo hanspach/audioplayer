@@ -1,9 +1,9 @@
+import org.hsoft 1.0
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Dialogs
 import QtMultimedia
-import org.hsoft 1.0
+
 
 Page {
     required property MediaPlayer player

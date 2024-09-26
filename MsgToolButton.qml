@@ -15,7 +15,7 @@ ToolButton {
         anchors.fill: parent
         hoverEnabled: true
         onClicked:  {
-            if(allowspin) {
+            if(control.allowspin) {
                 control.spin = true
                 spintimer.start()
             }

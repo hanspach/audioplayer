@@ -122,9 +122,6 @@ QString FileListModel::standardPath(int location) {
 
     if(!list.empty()) {
         res = list[0];
-        if(!res.endsWith("Music")) {
-            res += "/Music";
-        }
     }
     return res;
 }
